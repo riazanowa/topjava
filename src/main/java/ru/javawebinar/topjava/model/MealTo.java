@@ -1,8 +1,12 @@
 package ru.javawebinar.topjava.model;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class MealTo {
+
+    private Integer UUID;
+
     private final LocalDateTime dateTime;
 
     private final String description;
@@ -16,6 +20,34 @@ public class MealTo {
         this.description = description;
         this.calories = calories;
         this.excess = excess;
+    }
+
+    public Integer getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(Integer UUID) {
+        this.UUID = UUID;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public LocalTime getTime() {
+        return dateTime.toLocalTime();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public boolean isExcess() {
+        return excess;
     }
 
     @Override

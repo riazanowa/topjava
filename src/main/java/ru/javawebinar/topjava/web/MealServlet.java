@@ -24,7 +24,7 @@ public class MealServlet extends HttpServlet {
     public MealDao mealDao;
 
     private static String INSERT_OR_EDIT = "/main/webapp/meal_insert_or_edit.jsp";
-    private static String MEAL_LIST = "/main/webapp/meals.jsp";
+    private static String MEAL_LIST = "/meals.jsp";
 
     public MealServlet() {
         super();
@@ -34,9 +34,9 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        List<MealTo> mealToList = MealsUtil.mapToMealto(MealsUtil.MEALS);
+        List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAllMeal());
         req.setAttribute("mealToList", mealToList);
-        req.getRequestDispatcher("meals.jsp").forward(req, resp);
+        req.getRequestDispatcher(MEAL_LIST).forward(req, resp);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -49,7 +49,7 @@ public class MealServlet extends HttpServlet {
 
         RequestDispatcher view = request.getRequestDispatcher(MEAL_LIST);
         List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAllMeal());
-        request.setAttribute("mealToList",mealToList );
+        request.setAttribute("mealToList", mealToList);
         view.forward(request, response);
     }
 

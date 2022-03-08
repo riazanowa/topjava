@@ -23,8 +23,7 @@
     <br/>
     Calories : <input type="number" name="calories"/>
     <br/>
-    <input
-        type="submit" value="Submit"/>
+    <input type="submit" value="Submit"/>
 </form>
 
 </body>

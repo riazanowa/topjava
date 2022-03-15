@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://example.com/functions" prefix="f" %>
 <html>
 <head>
     <title>Edit meal</title>
@@ -15,16 +15,21 @@
     <h1>Edit meal</h1>
 </c:if>
 
-<form method="POST" action="/meals" name="formCreateMeal">
-    <javatime:parseLocalDateTime value="${meal.dateTime}" pattern="yyyy-MM-ddTHH:mm:ss" var="parsedDate" />"/>
-    DateTime : <input type="datetime-local" name="datetime" value="<c:out value="${parsedDate}"/>" />
+<form method="POST" action="/topjava/meals" name="formCreateMeal">
+    <p>
+    DateTime : <input type="datetime-local" name="datetime" value="${f:formatLocalDateTime(meal.dateTime, 'yyyy-MM-dd HH:mm')}" />
     <br/>
-    Description : <input type="text" name="description" value="<c:out value="${meal.description}"/>" />
+    </p>
+    <p>
+    Description : <input type="text" name="description" value="${meal.description}" />
     <br/>
-    Calories : <input type="number" name="calories" value="<c:out value="${meal.calories}"/>"/>
+    </p>
+    <p>
+    Calories : <input type="number" name="calories" value="${meal.calories}"/>
     <br/>
+    </p>
     <input type="submit" value="Submit"/>
-    <a class="btn-cancel" href="/meals">Cancel</a>
+    <button type="button"><a class="btn-cancel" href="/topjava/meals">Cancel</a></button>
 </form>
 
 </body>

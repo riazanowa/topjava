@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
+<%@taglib uri="http://example.com/functions" prefix="f" %>
 <html>
 <head>
     <title>Meals</title>
@@ -20,13 +20,11 @@
     </tr>
     <c:forEach  var="mealTo" items="${mealToList}">
         <tr class="${mealTo.excess ? 'red' : 'green'}">
-            <td><javatime:parseLocalDateTime value="${mealTo.dateTime}" pattern="yyyy-MM-ddTHH:mm:ss" var="parsedDate" />
-                <c:out value="${parsedDate}"/></td>
-            <td><c:out value="${mealTo.description}"/></td>
-            <td><c:out value="${mealTo.calories}"/></td>
-            <td><a>Update</a></td>
-            <td><a>Delete</a></td>
-
+            <td>${f:formatLocalDateTime(mealTo.dateTime, 'yyyy-MM-dd HH:mm')}</td>
+            <td>${mealTo.description}</td>
+            <td>${mealTo.calories}</td>
+            <td><a href="/topjava/meals?action=edit&mealId=${mealTo.id}">Update</a></td>
+            <td><a href="/topjava/meals?action=delete&mealId=${mealTo.id}">Delete</a></td>
         </tr>
     </c:forEach>
 

@@ -21,11 +21,7 @@ th {
     color: red;
 }
 
-.btn-cancel {
-    background-color: lightgrey;
+a {
     color: black;
-    padding: 10px 15px;
     text-decoration: none;
-    border-radius: 5px;
-    border-color: black;
 }

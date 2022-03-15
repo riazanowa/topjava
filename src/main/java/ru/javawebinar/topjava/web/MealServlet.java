@@ -39,21 +39,24 @@ public class MealServlet extends HttpServlet {
         String forward = "";
         String action = req.getParameter("action");
 
+        if (action == null) action = "listMeals";
+
         if (action.equalsIgnoreCase("delete")) {
             int mealId = Integer.parseInt(req.getParameter("mealId"));
             mealDao.delete(mealId);
-            log.info("Meal");
+            log.info("Meal {} has been deleted", mealId);
             forward = MEAL_LIST;
-            List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAll(), stubForCaloriesPerDay);
+            List<MealTo> mealToList = MealsUtil.filteredByStreams(mealDao.getAll(), stubForCaloriesPerDay);
             req.setAttribute("mealToList", mealToList);
         } else if (action.equalsIgnoreCase("edit")) {
             forward = INSERT_OR_EDIT;
             int mealId = Integer.parseInt(req.getParameter("mealId"));
             Meal meal = mealDao.getById(mealId);
+            log.info("Meal with id {} has been got", meal.getId());
             req.setAttribute("meal", meal);
         } else if (action.equalsIgnoreCase("listMeals")) {
             forward = MEAL_LIST;
-            List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAll(), stubForCaloriesPerDay);
+            List<MealTo> mealToList = MealsUtil.filteredByStreams(mealDao.getAll(), stubForCaloriesPerDay);
             req.setAttribute("mealToList", mealToList);
         } else {
             forward = INSERT_OR_EDIT;
@@ -61,6 +64,7 @@ public class MealServlet extends HttpServlet {
 
         RequestDispatcher view = req.getRequestDispatcher(forward);
         view.forward(req, resp);
+        log.info("Forward to {}", forward);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -73,14 +77,17 @@ public class MealServlet extends HttpServlet {
         String mealId = request.getParameter("mealId");
         if (mealId == null || mealId.isEmpty()) {
             mealDao.create(meal);
+            log.info("{} has been created", meal.toString());
         } else {
             meal.setId(Integer.parseInt(mealId));
             mealDao.update(meal);
+            log.info("{} has been updated", meal.toString());
         }
 
         RequestDispatcher view = request.getRequestDispatcher(MEAL_LIST);
-        List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAll(), stubForCaloriesPerDay);
+        List<MealTo> mealToList = MealsUtil.filteredByStreams(mealDao.getAll(), stubForCaloriesPerDay);
         request.setAttribute("mealToList", mealToList);
         view.forward(request, response);
+        log.info("Forward to {}", MEAL_LIST);
     }
 }

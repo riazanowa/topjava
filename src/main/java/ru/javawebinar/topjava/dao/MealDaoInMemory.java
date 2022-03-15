@@ -6,15 +6,17 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MealDaoImpl implements MealDao {
+public class MealDaoInMemory implements MealDao {
 
-    public static Integer UUID = 0;
-    static ReentrantLock counterLock = new ReentrantLock(true);
+    private AtomicInteger UUID = new AtomicInteger(0);
+    private ReentrantLock lock = new ReentrantLock(true);
 
-    public static ConcurrentHashMap<Integer, Meal> meals;
+    private Map<Integer, Meal> meals = new ConcurrentHashMap<>();
 
     {
         meals.put(1, new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
@@ -27,48 +29,35 @@ public class MealDaoImpl implements MealDao {
         meals.put(8, new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
-
-    public MealDaoImpl() {
-    }
-
-    static void incrementUUID() {
-        counterLock.lock();
-
+    @Override
+    public Meal create(Meal meal) {
+        lock.lock();
         try {
-            UUID++;
+            meal.setId(UUID.incrementAndGet());
+            meals.put(UUID.get(), meal);
         } finally {
-            counterLock.unlock();
+            lock.unlock();
         }
+        return meal;
     }
 
     @Override
-    public void createMeal(Meal meal) {
-        if (!meals.contains(meal)) {
-            incrementUUID();
-            meal.setId(UUID);
-            meals.put(UUID, meal);
-        }
+    public void delete(int id) {
+        meals.remove(id);
     }
 
     @Override
-    public void deleteMeal(Integer UUID) {
-        Meal meal = meals.get(UUID);
-        if (meal != null) meals.remove(UUID, meal);
+    public Meal update(Meal meal) {
+        return meals.put(meal.getId(), meal);
     }
 
     @Override
-    public void updateMeal(Meal meal) {
-        incrementUUID();
-        meals.put(UUID, meal);
-    }
-
-    @Override
-    public List<Meal> getAllMeal() {
+    public List<Meal> getAll() {
         return new ArrayList<>(meals.values());
     }
 
     @Override
-    public Meal getMealById(Integer UUID) {
-        return meals.getOrDefault(UUID, null);
+    public Meal getById(int id) {
+        return meals.get(id);
     }
 }

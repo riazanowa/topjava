@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: katri
-  Date: 15.02.2022
-  Time: 17:28
-  To change this template use File | Settings | File Templates.
---%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
@@ -25,7 +18,7 @@
         <th></th>
         <th></th>
     </tr>
-    <c:forEach  var="mealTo" items="${requestScope.mealToList}">
+    <c:forEach  var="mealTo" items="${mealToList}">
         <tr class="${mealTo.excess ? 'red' : 'green'}">
             <td><javatime:parseLocalDateTime value="${mealTo.dateTime}" pattern="yyyy-MM-ddTHH:mm:ss" var="parsedDate" />
                 <c:out value="${parsedDate}"/></td>

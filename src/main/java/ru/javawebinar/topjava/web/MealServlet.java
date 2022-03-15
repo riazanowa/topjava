@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.dao.MealDao;
-import ru.javawebinar.topjava.dao.MealDaoImpl;
+import ru.javawebinar.topjava.dao.MealDaoInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -20,37 +20,67 @@ import java.util.List;
 
 public class MealServlet extends HttpServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
+    private static final String INSERT_OR_EDIT = "/mealInsertOrEdit.jsp";
+    private static final String MEAL_LIST = "/meals.jsp";
+    private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
+
+    private static final int stubForCaloriesPerDay = 2000;
+
     public MealDao mealDao;
 
-    private static String INSERT_OR_EDIT = "/main/webapp/meal_insert_or_edit.jsp";
-    private static String MEAL_LIST = "/meals.jsp";
 
-    public MealServlet() {
-        super();
-        this.mealDao = new MealDaoImpl();
+    @Override
+    public void init() throws ServletException {
+        this.mealDao = new MealDaoInMemory();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String forward = "";
+        String action = req.getParameter("action");
 
-        List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAllMeal());
-        req.setAttribute("mealToList", mealToList);
-        req.getRequestDispatcher(MEAL_LIST).forward(req, resp);
+        if (action.equalsIgnoreCase("delete")) {
+            int mealId = Integer.parseInt(req.getParameter("mealId"));
+            mealDao.delete(mealId);
+            log.info("Meal");
+            forward = MEAL_LIST;
+            List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAll(), stubForCaloriesPerDay);
+            req.setAttribute("mealToList", mealToList);
+        } else if (action.equalsIgnoreCase("edit")) {
+            forward = INSERT_OR_EDIT;
+            int mealId = Integer.parseInt(req.getParameter("mealId"));
+            Meal meal = mealDao.getById(mealId);
+            req.setAttribute("meal", meal);
+        } else if (action.equalsIgnoreCase("listMeals")) {
+            forward = MEAL_LIST;
+            List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAll(), stubForCaloriesPerDay);
+            req.setAttribute("mealToList", mealToList);
+        } else {
+            forward = INSERT_OR_EDIT;
+        }
+
+        RequestDispatcher view = req.getRequestDispatcher(forward);
+        view.forward(req, resp);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Meal meal = new Meal();
-        meal.setDateTime(LocalDateTime.parse(request.getParameter("datetime"), DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        meal.setDescription(request.getParameter("description"));
-        meal.setCalories(Integer.parseInt(request.getParameter("calories")));
+        Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("datetime")),
+                request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories"))
+        );
 
-        mealDao.createMeal(meal);
+        String mealId = request.getParameter("mealId");
+        if (mealId == null || mealId.isEmpty()) {
+            mealDao.create(meal);
+        } else {
+            meal.setId(Integer.parseInt(mealId));
+            mealDao.update(meal);
+        }
 
         RequestDispatcher view = request.getRequestDispatcher(MEAL_LIST);
-        List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAllMeal());
+        List<MealTo> mealToList = MealsUtil.mapToMealto(mealDao.getAll(), stubForCaloriesPerDay);
         request.setAttribute("mealToList", mealToList);
         view.forward(request, response);
     }
-
 }

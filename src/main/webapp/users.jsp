@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <title>Users</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <h3><a href="index.html">Home</a></h3>

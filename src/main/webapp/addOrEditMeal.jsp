@@ -1,7 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@taglib uri="http://example.com/functions" prefix="f" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
@@ -16,18 +14,17 @@
       name="formCreateMeal">
     <p>
         DateTime : <input type="datetime-local" name="datetime"
-                          value="${not empty meal.id ? meal.dateTime: ''}"/>
+                          value="${ meal.dateTime}"/>
         <br/>
     </p>
     <p>
-        Description : <input type="text" name="description" value="${not empty meal.id ?  meal.description: ''}"/>
+        Description : <input type="text" name="description" value="${meal.description }"/>
         <br/>
     </p>
     <p>
-        Calories : <input type="number" name="calories" value="${not empty meal.id ? meal.calories: '0'}"/>
+        Calories : <input type="number" name="calories" value="${ meal.calories}"/>
         <br/>
     </p>
-    <input type="hidden" name="id" value="${not empty meal.id? meal.id: ''}"/>
     <input type="submit" value="Submit"/>
     <button type="button"><a class="btn-cancel" href="${pageContext.request.contextPath}/meals">Cancel</a></button>
 </form>

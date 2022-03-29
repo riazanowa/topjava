@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryMealDao implements MealDao {
 
-    private AtomicInteger counter = new AtomicInteger(1);
+    private AtomicInteger counter = new AtomicInteger();
 
     private Map<Integer, Meal> meals = new ConcurrentHashMap<>();
 
@@ -27,9 +27,11 @@ public class InMemoryMealDao implements MealDao {
     }
 
     @Override
-    public synchronized Meal add(Meal meal) {
-        meal.setId(counter.incrementAndGet());
-        return meals.put(counter.get(), meal);
+    public Meal add(Meal meal) {
+        int id = counter.incrementAndGet();
+        meal.setId(id);
+        meals.put(id, meal);
+        return meal;
     }
 
     @Override
@@ -40,10 +42,8 @@ public class InMemoryMealDao implements MealDao {
     @Override
     public Meal update(Meal meal) {
         int mealId = meal.getId();
-        if (meals.get(mealId) != null) {
-            return meals.put(mealId, meal);
-        }
-        return null;
+        meals.replace(mealId, meal);
+        return meal;
     }
 
     @Override

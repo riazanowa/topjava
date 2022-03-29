@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.dao.InMemoryMealDao;
 import ru.javawebinar.topjava.dao.MealDao;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.RequestDispatcher;
@@ -15,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 public class MealServlet extends HttpServlet {
 
@@ -32,7 +35,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
         String forward = "";
         String action = req.getParameter("action");
         int mealId;
@@ -55,19 +57,21 @@ public class MealServlet extends HttpServlet {
                 break;
             case ("add"):
                 forward = ADD_OR_EDIT;
+                Meal newMeal = new Meal(
+                       LocalDateTime.parse(DateTimeUtil.getCurrentFormattedTime()),
+                        "Беляши",
+                        700);
+                req.setAttribute("meal", newMeal);
                 break;
             case ("listMeals"):
-                forward = MEAL_LIST;
-                List<MealTo> mealToList = MealsUtil.getListWithExcess(mealDao.getAll());
-                req.setAttribute("mealToList", mealToList);
-                break;
             default:
                 forward = MEAL_LIST;
+                List<MealTo> mealToList = MealsUtil.getListWithExcess(mealDao.getAll(), MealsUtil.CALORIES_PER_DAY);
+                req.setAttribute("mealToList", mealToList);
                 break;
         }
 
-        RequestDispatcher view = req.getRequestDispatcher(forward);
-        view.forward(req, resp);
+        req.getRequestDispatcher(forward).forward(req, resp);
         log.info("Forward to {}", forward);
     }
 
@@ -90,7 +94,6 @@ public class MealServlet extends HttpServlet {
         }
 
         log.info("Redirect to Meal Servlet");
-
         response.sendRedirect(request.getContextPath() + "/meals");
     }
 }

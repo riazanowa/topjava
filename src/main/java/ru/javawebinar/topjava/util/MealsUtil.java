@@ -42,8 +42,8 @@ public class MealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<MealTo> getListWithExcess(List<Meal> meals) {
-        return filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
+    public static List<MealTo> getListWithExcess(List<Meal> meals, int caloriesPerDay) {
+        return filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {

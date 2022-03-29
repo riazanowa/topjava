@@ -9,16 +9,14 @@ import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Locale;
 
 public class MealServlet extends HttpServlet {
 
@@ -57,10 +55,7 @@ public class MealServlet extends HttpServlet {
                 break;
             case ("add"):
                 forward = ADD_OR_EDIT;
-                Meal newMeal = new Meal(
-                       LocalDateTime.parse(DateTimeUtil.getCurrentFormattedTime()),
-                        "Беляши",
-                        700);
+                Meal newMeal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS), "", 0);
                 req.setAttribute("meal", newMeal);
                 break;
             case ("listMeals"):

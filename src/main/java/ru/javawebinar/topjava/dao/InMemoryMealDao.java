@@ -41,9 +41,7 @@ public class InMemoryMealDao implements MealDao {
 
     @Override
     public Meal update(Meal meal) {
-        int mealId = meal.getId();
-        meals.replace(mealId, meal);
-        return meal;
+        return meals.replace(meal.getId(), meal) != null ?  meal: null;
     }
 
     @Override
